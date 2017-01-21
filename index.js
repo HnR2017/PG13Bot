@@ -1,5 +1,5 @@
 var TelegramBot = require('node-telegram-bot-api'),
-swearWords = require('fs').readFileSync('node_modules/swear-dict/file.txt').toString().split("\r\n").join("|"),
+swearWords = require('fs').readFileSync('node_modules/swear-dict/file.txt').toString().split("\\s*\r\n").join("|"),
 telegramBot = new TelegramBot("328851584:AAExUy5be2KA-_SgWUDhCZFs5iIT9MFoOHU", { polling: true });
 
 
