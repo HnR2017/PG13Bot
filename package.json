@@ -1,17 +1,25 @@
 {
   "name": "hnr",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Clarence Chee <clarencechee94@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.15.3",
-    "body-parser": "^1.16.0",
-    "express": "^4.14.0"
-  }
+    "dictionary": "^1.0.1",
+    "moment": "^2.17.1",
+    "node-telegram-bot-api": "^0.26.0"
+  },
+  "devDependencies": {},
+  "description": "A bot to censor swear words",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HnR2017/PG13Bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HnR2017/PG13Bot/issues"
+  },
+  "homepage": "https://github.com/HnR2017/PG13Bot#readme"
 }

@@ -1,45 +1,62 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-const axios = require('axios')
+var TelegramBot = require('node-telegram-bot-api'),
+swearWords = require('fs').readFileSync('node_modules/swear-dict/file.txt').toString().split("\r\n").join("|"),
+telegramBot = new TelegramBot("328851584:AAExUy5be2KA-_SgWUDhCZFs5iIT9MFoOHU", { polling: true });
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({
-  extended: true
-})); // for parsing application/x-www-form-urlencoded
 
-//This is the route the API will call
-app.post('/new-message', function(req, res) {
-  const {message} = req.body
+var swear = new RegExp("("+swearWords+")", "i");
 
-  //Each message contains "text" and a "chat" object, which has an "id" which is the chat id
+var summary = new RegExp("/summary", "i");
+var sessions = {};
 
-  if (!message || message.text.toLowerCase().indexOf('marco') <0) {
-    // In case a message is not present, or if our message does not have the word marco in it, do nothing and return an empty response
-    return res.end()
+telegramBot.onText(summary, (message) => {
+  var session = sessions[message.chat.id];
+  var replyString = "";
+  for(i in session) {
+    replyString = replyString + "\n" + session[i]["name"] + " has swore " + session[i]["count"] + " times in this chat";
   }
-
-  // If we've gotten this far, it means that we have received a message containing the word "marco".
-  // Respond by hitting the telegram bot API and responding to the approprite chat_id with the word "Polo!!"
-  // Remember to use your own API toked instead of the one below  "https://api.telegram.org/bot<your_api_token>/sendMessage"
-  axios.post('https://api.telegram.org/bot303292914:AAEabrV7m3XDyZ4I2jAC_9zHBon-5D3O7Wo/sendMessage', {
-    chat_id: message.chat.id,
-    text: 'Polo!!'
-  })
-    .then(response => {
-      // We get here if the message was successfully posted
-      console.log('Message posted')
-      res.end('ok')
-    })
-    .catch(err => {
-      // ...and here if it was not
-      console.log('Error :', err)
-      res.end('Error :' + err)
-    })
-
+  replyString = replyString.substring(1,replyString.lastIndexOf("\n") + 1);
+  replyString = replyString + "Total swore count for this chat is " + session["total"];
+  
+  telegramBot.sendMessage(message.chat.id, replyString);
 });
 
-// Finally, start our server
-app.listen(3000, function() {
-  console.log('Telegram app listening on port 3000!');
+telegramBot.onText(swear, (message) => {
+  /*var swearingUser = {
+    id: message.from.id,
+    name: message.from.first_name,
+    swearCount: 1;
+  }
+
+  if (sessions.indexOf(message.chat.id) < 0) { // if new session
+    sessions.push({
+      userCount: 1,
+      swearCount: 1,
+      userList: [swearingUser]
+    })
+  } else { // existing session
+    var currSession = sessions[sessions.indexOf(message.chat.id)];
+    if (currSession["userList"].indexOf(swearingUser) < 0) { // if user list of current session doesnt have this user
+      currSession["userList"].push(swearingUser);
+    } else {
+
+    }
+  }*/
+  if(!(message.chat.id in sessions)) {
+    sessions[message.chat.id] = {};
+    sessions[message.chat.id]["total"] = 0;
+  }
+
+  if(!(message.from.id in sessions[message.chat.id])) {
+    sessions[message.chat.id][message.from.id] = {};
+    sessions[message.chat.id][message.from.id]["count"] = 0;
+    sessions[message.chat.id][message.from.id]["name"] = message.from.first_name;
+  }
+
+  sessions[message.chat.id]["total"] ++;
+  sessions[message.chat.id][message.from.id]["count"] ++;
+  
+  replyString = sessions[message.chat.id][message.from.id]["name"] + " has swore a total of " 
+          + sessions[message.chat.id][message.from.id]["count"] + " times in this chat.";
+  telegramBot.sendMessage(message.chat.id, replyString);
+  console.log(sessions);
 });
