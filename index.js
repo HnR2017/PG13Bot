@@ -1,6 +1,6 @@
 var TelegramBot = require('node-telegram-bot-api'),
 
-telegram = new TelegramBot("318302702:AAFFO8sSBgiphe6CYjFWTu3W_wazGALHiBQ", { polling: true });
+telegram = new TelegramBot("314416446:AAHq1U_WbeJCM7Vot29Ky-a6tZX9jhwOqok", { polling: true });
 
 var swear = new RegExp("fuck");
 var count = 0;
