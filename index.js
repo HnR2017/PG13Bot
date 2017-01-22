@@ -1,8 +1,8 @@
 var TelegramBot = require('node-telegram-bot-api'),
 swearWords = require('fs').readFileSync('node_modules/swear-dict/file.txt').toString().split("\r\n").join("|"),
 telegramBot = new TelegramBot("314416446:AAHq1U_WbeJCM7Vot29Ky-a6tZX9jhwOqok", { polling: true });
+telegramBot = new TelegramBot("303292914:AAEabrV7m3XDyZ4I2jAC_9zHBon-5D3O7Wo", { polling: true });
 
-console.log(swearWords);
 var swear = new RegExp("("+swearWords+")", "i");
 
 var summary = new RegExp("/summary", "i");
