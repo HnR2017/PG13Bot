@@ -2,7 +2,6 @@ var TelegramBot = require('node-telegram-bot-api'),
 swearWords = require('fs').readFileSync('node_modules/swear-dict/file.txt').toString().split("\r\n").join("|"),
 telegramBot = new TelegramBot("314416446:AAHq1U_WbeJCM7Vot29Ky-a6tZX9jhwOqok", { polling: true });
 
-console.log(swearWords);
 var swear = new RegExp("("+swearWords+")", "i");
 
 var summary = new RegExp("/summary", "i");
@@ -20,6 +19,7 @@ telegramBot.onText(summary, (message) => {
   telegramBot.sendMessage(message.chat.id, replyString);
 });
 
+//When user enters swear 
 telegramBot.onText(swear, (message) => {
   /*var swearingUser = {
     id: message.from.id,
@@ -59,4 +59,14 @@ telegramBot.onText(swear, (message) => {
           + sessions[message.chat.id][message.from.id]["count"] + " times in this chat.";
   telegramBot.sendMessage(message.chat.id, replyString);
   console.log(sessions);
+});
+
+//Reset Command 
+var reset = new RegExp("/reset");
+telegramBot.onText(reset, (message) => {
+	sessions[message.chat.id]["total"] = sessions[message.chat.id]["total"] - sessions[message.chat.id][message.from.id]["count"];
+	sessions[message.chat.id][message.from.id]["count"] = 0;
+	replyString = sessions[message.chat.id][message.from.id]["name"] + "'s count has been reset. ";
+	telegramBot.sendMessage(message.chat.id,replyString);
+	console.log(sessions);
 });
